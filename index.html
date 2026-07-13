@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>solxmn | Instagram, TikTok</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Space Mono', monospace; background-color: #ffeee1; overflow-x: hidden; }
+        :root { --outer-card-bg: rgba(0,0,0,0.20); --subcard-bg: rgba(0,0,0,0.18); }
+
+        #mobileOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); color: #fff; z-index: 3000; display: none; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+        #mobileOverlay .inner { max-width: 520px; display: flex; flex-direction: column; gap: 0.75rem; }
+        #mobileOverlay .title { font-family: 'Patrick Hand', cursive; font-size: 2rem; letter-spacing: 2px; }
+        #mobileOverlay .message { font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; }
+        @media (max-width: 768px) {
+            #mobileOverlay { display: flex; }
+            html, body { height: 100%; }
+            body { overflow: hidden; }
+        }
+
+        .background-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -3; opacity: 0.3; filter: blur(20px); transform: scale(1.1); }
+        
+        .hero-background { position: relative; height: 100vh; width: 100%; overflow: hidden; }
+        .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+        .hero-tint { position: absolute; inset: 0; background: rgba(0,0,0,0.64); z-index: -1; }
+        .hero-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: #fff; text-align: center; }
+
+        .profile-video-container { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin-bottom: 1rem; position: relative; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.3); pointer-events: auto; cursor: pointer; user-select: auto; }
+        .profile-video-wrapper { position: relative; width: 100%; height: 100%; }
+        .profile-video-wrapper img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 45% 50%; display: block; }
+        .profile-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .profile-description { font-size: 1rem; opacity: 0.9; margin-bottom: 2rem; }
+
+        .social-icons { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .social-icon { width: 32px; height: 32px; color: white; transition: transform 0.2s; }
+        .social-icon:hover { transform: scale(1.075); }
+
+        
+        .top-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 1rem; }
+        .top-bar-content { max-width: 580px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+
+        @media (max-width: 768px) {
+            .profile-video-container { width: 100px; height: 100px; }
+        }
+
+        .click-prompt { font-family: 'Patrick Hand', cursive; font-size: 1.1rem; color: rgba(255, 255, 255, 0.4); text-align: center; margin-bottom: 0.75rem; letter-spacing: 1px; animation: float-text 2s ease-in-out infinite; }
+        @keyframes float-text { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        
+        .media-player { margin-top: 3rem; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; user-select: none; position: absolute; left: 50%; transform: translateX(-50%); top: calc(50vh + 120px); z-index: 400; padding: 0.75rem 0; }
+        .player-row { display: flex; align-items: center; gap: 1rem; }
+        .play-button { width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; display: grid; place-items: center; }
+        .play-button .icon-play { width: 0; height: 0; border-left: 18px solid #fff; border-top: 11px solid transparent; border-bottom: 11px solid transparent; }
+        .play-button .icon-pause { position: relative; width: 18px; height: 22px; display: none; }
+        .play-button .icon-pause:before, .play-button .icon-pause:after { content: ''; position: absolute; top: 0; bottom: 0; width: 5px; border-radius: 1px; background: #fff; }
+        .play-button .icon-pause:before { left: 0; } .play-button .icon-pause:after { right: 0; }
+        .media-player.playing .icon-play { display: none; } .media-player.playing .icon-pause { display: block; }
+
+        .progress-container { position: relative; width: 520px; height: 26px; cursor: pointer; }
+        .progress-base, .progress-fill { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 14px; pointer-events: none; }
+        .progress-fill { overflow: hidden; width: 0%; }
+        .progress-base svg, .progress-fill svg { width: 100%; height: 14px; display: block; }
+        .progress-base path { stroke: rgba(255,255,255,0.45); stroke-width: 2; fill: none; stroke-linecap: round; }
+        .progress-fill path { stroke: #fff; stroke-width: 2; fill: none; stroke-linecap: round; }
+
+        .time-text { font-family: 'Patrick Hand', cursive; font-size: 2rem; letter-spacing: 2px; min-width: 90px; text-align: left; }
+        .track-meta { text-align: left; width: 100%; max-width: 520px; }
+        .track-title { font-family: 'Patrick Hand', cursive; font-size: 2rem; line-height: 1; }
+        .track-artist { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: rgba(255,255,255,0.65); line-height: 1; margin-top: 0.15rem; }
+        @media (max-width: 768px) { .progress-container { width: 300px; } .time-text { font-size: 1.6rem; min-width: 70px; } .track-meta { max-width: 300px; } .track-title { font-size: 1.6rem; } .track-artist { font-size: 1rem; } }
+
+        
+    .scroll-prompt { position: absolute; left: 50%; transform: translateX(-50%); bottom: 48px; color: #fff; text-align: center; z-index: 401; user-select: none; pointer-events: none; transition: opacity 0.35s ease; opacity: 0.9; }
+        .scroll-prompt.hidden { opacity: 0; }
+        .scroll-prompt .prompt-text { font-family: 'Patrick Hand', cursive; font-size: 2rem; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.45); }
+        .scroll-prompt .arrow { margin: 0.35rem auto 0; width: 42px; height: 42px; animation: arrowBounce 1.6s ease-in-out infinite; opacity: 0.95; }
+        .scroll-prompt .arrow svg { width: 100%; height: 100%; display: block; }
+        @keyframes arrowBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+        
+        .ascii-sep { display: block; clear: both; width: 100%; margin: 0.6rem 0 0.7rem 0; color: rgba(255,255,255,0.65); letter-spacing: 1px; font-family: 'Space Mono', monospace; }
+        .ascii-title { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.75); letter-spacing: 2px; margin-bottom: 0.3rem; }
+        .ascii-ruler { position: absolute; left: 6px; top: 28px; bottom: 16px; width: 8px; pointer-events: none; color: rgba(255,255,255,0.5); font-family: 'Space Mono', monospace; font-size: 12px; line-height: 12px; white-space: pre; }
+        .tag { font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+        .tag-close { color: rgba(255,255,255,0.55); margin-left: 0.25rem; }
+        .section-header { display: flex; align-items: center; gap: 0.5rem; }
+        .title-with-hearts { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .heart-inline { width: 14px; height: 14px; }
+
+        /* Keep closing tag tight to the right heart */
+        #about .section-header .title-with-hearts { display: inline-flex; white-space: nowrap; }
+        #about .section-header .title-with-hearts .tag-close { margin-left: 0.25rem; margin-right: 0; }
+
+        
+    .ascii-card { position: relative; padding: 1rem 1.25rem; border: 1px solid #99a18c; border-radius: 18px; color: #ffffff; background: var(--outer-card-bg); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); overflow: hidden; width: 100%; box-sizing: border-box; }
+        .ascii-card:before { content: "+------------------------------+"; position: absolute; top: -12px; left: 8px; font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.55); }
+        .ascii-card:after { content: "+------------------------------+"; position: absolute; bottom: -12px; right: 8px; font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.55); }
+        
+        
+        @media (max-width: 479px) {
+            .ascii-card { padding: 0.85rem 1rem; }
+            .ascii-card:before, .ascii-card:after { font-size: 11px; }
+            .ascii-card:before { left: 6px; }
+            .ascii-card:after { right: 6px; }
+        }
+
+        
+        .section { position: relative; z-index: 1; padding: 1rem; margin: 2rem auto; }
+    .section .section-inner { max-width: 980px; margin: 0 auto; padding: 1.25rem; border: 1px solid #99a18c; border-radius: 18px; color: #ffffff; background: var(--outer-card-bg); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); overflow: hidden; }
+        
+        
+        @media (max-width: 479px) {
+            .section { padding: 0.5rem; margin: 1.5rem auto; }
+            .section .section-inner { padding: 1rem; }
+        }
+        
+        @media (min-width: 480px) and (max-width: 767px) {
+            .section { padding: 0.75rem; margin: 1.75rem auto; }
+            .section .section-inner { padding: 1.1rem; }
+        }
+        
+        .section h2 { font-size: 1.35rem; margin-bottom: 0.6rem; }
+        .section h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; }
+    .section .muted { color: rgba(255,255,255,0.85); }
+    
+    #skills .section-inner { background: var(--outer-card-bg); }
+
+        
+    .about-skills-grid { max-width: 1720px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .about-skills-grid .section { margin: 0; min-width: 0; }
+        .about-skills-grid .section .section-inner { max-width: none; width: 100%; margin: 0; min-width: 0; }
+        .about-skills-grid .section .ascii-card { min-width: 0; }
+        
+        
+        @media (min-width: 768px) {
+            .about-skills-grid { padding: 0 2rem; gap: 2.5rem; }
+        }
+        
+        
+        @media (min-width: 1024px) {
+            /* Make About wider and gently enlarge Skills */
+            .about-skills-grid { grid-template-columns: 1.5fr 1.2fr; align-items: stretch; }
+            .about-skills-grid .section { align-self: stretch; }
+            
+            .about-skills-grid .section,
+            .about-skills-grid .section .section-inner,
+            .about-skills-grid .section .ascii-card { height: 100%; }
+            
+            /* Prevent cards from hugging the viewport edges on medium/large screens */
+            .about-skills-grid #about { margin-left: 0; margin-right: 0; }
+            .about-skills-grid #skills { margin-left: 0; }
+        }
+
+        
+        .skills-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.6rem; width: 100%; overflow: hidden; }
+    
+    
+    @media (max-width: 479px) {
+        .skills-grid { gap: 0.8rem; }
+        .skill-card { padding: 0.75rem; }
+    }
+    
+     
+    @media (min-width: 480px) and (max-width: 599px) { 
+        .skills-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; } 
+    }
+    
+     
+    @media (min-width: 600px) and (max-width: 899px) { 
+        .skills-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.25rem; } 
+    }
+    
+     
+    @media (min-width: 900px) and (max-width: 1199px) { 
+        .skills-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.25rem; } 
+    }
+    
+     
+    @media (min-width: 1200px) { 
+        .skills-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.5rem; } 
+    }
+    
+    .skill-card { border: 1px solid #99a18c; border-radius: 14px; padding: 0.9rem; background: var(--subcard-bg); width: 100%; box-sizing: border-box; overflow: hidden; min-width: 0; }
+        .skill-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .badge { font-size: 0.85rem; padding: 0.25rem 0.6rem; border: 1px solid #99a18c; border-radius: 999px; color: #fdfffa; background: rgba(255,255,255,0.03); }
+        
+        
+        @media (max-width: 479px) {
+            .skill-badges { gap: 0.4rem; }
+            .badge { font-size: 0.8rem; padding: 0.2rem 0.5rem; }
+        }
+        .level { display: flex; align-items: center; gap: 0.25rem; margin-top: 0.6rem; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.28); }
+        .dot.filled { background: #ffffff; }
+        .skill-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.35rem 0; border-top: 1px dashed rgba(255,255,255,0.12); }
+        .skill-row:first-child { border-top: none; }
+        .skill-name { font-size: 0.95rem; word-wrap: break-word; overflow-wrap: break-word; }
+
+        
+        .projects-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 780px) { .projects-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    .project-card { display: flex; flex-direction: column; gap: 0.75rem; border: 1px solid #99a18c; border-radius: 16px; padding: 1rem; background: rgba(0,0,0,0.18); }
+        .project-title { font-size: 1.1rem; font-weight: 700; }
+        .project-desc { color: rgba(255,255,255,0.9); line-height: 1.55; }
+        .tech-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .tech { font-size: 0.8rem; padding: 0.2rem 0.5rem; border: 1px solid #99a18c; border-radius: 999px; color: #fdfffa; background: rgba(255,255,255,0.06); }
+        .project-actions { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
+        .btn { display: inline-block; padding: 0.5rem 0.9rem; border-radius: 12px; border: 1px solid #99a18c; color: #fdfffa; text-decoration: none; transition: background 0.2s, transform 0.2s; }
+        .btn:hover { background: #99a18c; transform: translateY(-1px); }
+        .btn.secondary { background: rgba(255,255,255,0.03); }
+        .btn[aria-disabled="true"] { opacity: 0.6; pointer-events: none; }
+
+    
+    .marquee { position: relative; overflow: hidden; width: 100%; margin-top: 0.5rem; }
+    .marquee__track { display: inline-flex; white-space: nowrap; gap: 0; align-items: center; will-change: transform; animation: marquee-left 14s linear infinite; font-size: 0; }
+    .marquee__item { flex: 0 0 auto; font-size: 1rem; }
+    @keyframes marquee-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .marquee__track { animation: none; } }
+
+    
+    .ascii-card h2 { margin-top: 0.25rem; }
+        #about .about-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 0.5rem; overflow: hidden; }
+    
+    
+    @media (min-width: 480px) {
+        #about .about-grid { gap: 1.25rem; }
+    }
+    
+     
+    @media (min-width: 780px) { 
+        #about .about-grid { grid-template-columns: 0.9fr 1.1fr; gap: 1.5rem; } 
+    }
+    
+    #about .card-block { background: var(--subcard-bg); border: 1px solid #99a18c; border-radius: 12px; padding: 0.75rem; width: 100%; box-sizing: border-box; overflow: hidden; }
+    
+    
+    @media (max-width: 479px) {
+        #about .card-block { padding: 0.65rem; }
+        #about .about-grid { gap: 0.8rem; }
+    }
+        #about ul { margin-left: 1rem; line-height: 1.6; word-wrap: break-word; }
+        #about .kv { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.5rem; align-items: baseline; }
+        #about .kv dt { color: rgba(255,255,255,0.85); word-wrap: break-word; }
+        #about .kv dd { color: rgba(255,255,255,0.95); word-wrap: break-word; }
+    #about .spoken-langs { line-height: 1.9; }
+    
+    #about .spoken-langs + .ascii-sep { margin-top: 0.2rem; }
+    
+    #about h3 { font-size: 1.15rem; word-wrap: break-word; }
+    #about .tag, #about .tag-close { font-size: 0.95rem; }
+    #about p { word-wrap: break-word; overflow-wrap: break-word; }
+    
+    #skills h3 { font-size: 1.15rem; word-wrap: break-word; }
+    #skills p { word-wrap: break-word; overflow-wrap: break-word; }
+    
+    #about .inspiration-lead { margin-bottom: 0.5rem; }
+    #about .inspiration-list { margin-left: 1rem; line-height: 1.9; margin-top: 0.6rem; margin-bottom: 0.85rem; }
+    #about .inspiration-list li { margin: 0.35rem 0 0.6rem; }
+    #about .inspiration-list strong { font-weight: 800; letter-spacing: 1px; font-size: 1.12rem; }
+    #about .inspiration-note { margin-top: 0.65rem; }
+    #about .games-block { margin-top: 0.35rem; }
+    #about .game-title { font-weight: 700; letter-spacing: 1px; font-size: 1.2rem; }
+
+        
+        .qr-code { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; opacity: 0; transition: opacity 0.3s; }
+        @media (min-width: 1022px) { .qr-code { opacity: 1; } }
+        .qr-text { color: #fff; font-size: 0.875rem; font-weight: 500; text-align: center; mix-blend-mode: difference; }
+        .qr-image { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .qr-image img { width: 100%; height: 100%; }
+    </style>
+    <script src="script.js" defer></script>
+    <script>
+        window.hasVisitedRedesign = localStorage.getItem('visitedRedesign') === 'true';
+        document.addEventListener('DOMContentLoaded', () => {
+            const fullInspirationText = document.getElementById('fullInspirationText');
+            if (fullInspirationText) {
+                fullInspirationText.style.display = window.hasVisitedRedesign ? 'block' : 'none';
+            }
+            const redactedText = document.getElementById('redactedText');
+            if (redactedText) {
+                redactedText.style.display = window.hasVisitedRedesign ? 'none' : 'block';
+            }
+        });
+    </script>
+
+</head>
+<body>
+
+<script type="module">
+import { getDiscordGifUrl } from "./av.js";
+
+// Top-level await works in <script type="module">
+let gifUrl = null;
+
+try {
+    gifUrl = await getDiscordGifUrl();
+} catch (error) {
+    console.warn("Failed to fetch Discord GIF, using fallback:", error);
+}
+
+if (!gifUrl) {
+    gifUrl = "https://fuchsia-grata-24.tiiny.site/somk.gif"; // Fallback to default gif
+}
+
+// Set the profile picture
+const profileImg = document.querySelector('.profile-video-wrapper img');
+if (profileImg) {
+    profileImg.src = gifUrl;
+    console.log("Avatar loaded:", gifUrl);
+} else {
+    console.error("Profile image element not found");
+}
+</script>
+
+    <div id="mobileOverlay" role="dialog" aria-modal="true" aria-labelledby="mobileOverlayTitle">
+        <div class="inner">
+            <div class="title" id="mobileOverlayTitle">Desktop recommended</div>
+            <div class="message">For the full experience, please view this portfolio on a desktop screen.</div>
+        </div>
+    </div>
+    
+    <div class="top-bar">
+        <div class="top-bar-content">
+        </div>
+    </div>
+    <div class="hero-background">
+        <video class="hero-video" autoplay muted loop playsinline src="static/videos/river.mov"></video>
+        <div class="hero-tint"></div>
+        
+        <div class="hero-content">
+            <div class="profile-video-container">
+                <div class="profile-video-wrapper">
+                    <img src="" alt="profile" loading="eager" />
+                </div>
+            </div>
+            
+            <h1 class="profile-title">solxmn</h1>
+        <p class="profile-description"></p>
+            
+            <div class="social-icons">
+                <a href="https://www.instagram.com/soxl.mn/" target="_blank" rel="noopener noreferrer" class="social-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C9.2912 2 8.94131 2 7.86907 2.05643C7.03985 2.07241 6.21934 2.22888 5.44244 2.51919C4.78781 2.77878 4.23476 3.11738 3.67043 3.68172C3.11738 4.23476 2.76749 4.78781 2.51919 5.45372C2.27088 6.08578 2.10158 6.80813 2.05643 7.88036C2.01129 8.94131 2 9.27991 2 12C2 14.7088 2 15.0474 2.05643 16.1196C2.10158 17.1919 2.28217 17.9255 2.51919 18.5576C2.77878 19.2122 3.11738 19.7652 3.67043 20.3296C4.23476 20.8826 4.78781 21.2325 5.44244 21.4808C6.08578 21.7291 6.80813 21.8984 7.86907 21.9436C8.94131 21.9887 9.27991 22 12 22C14.7088 22 15.0474 22 16.1196 21.9436C17.1806 21.8984 17.9142 21.7178 18.5463 21.4808C19.2137 21.2306 19.8184 20.8377 20.3183 20.3296C20.8826 19.7652 21.2212 19.2009 21.4695 18.5576C21.7178 17.9142 21.8871 17.1919 21.9436 16.1196C21.9887 15.0587 22 14.7201 22 12C22 9.2912 21.9887 8.9526 21.9436 7.88036C21.9225 7.05065 21.7622 6.23037 21.4695 5.45372C21.2189 4.78649 20.8261 4.18182 20.3183 3.68172C19.754 3.11738 19.2122 2.77878 18.5463 2.51919C17.7686 2.23315 16.9482 2.08051 16.1196 2.06772C15.0474 2.01129 14.7088 2 12 2ZM11.0971 3.80587H12C14.6637 3.80587 14.9797 3.80587 16.0406 3.8623C16.6724 3.8686 17.2985 3.98313 17.8916 4.2009C18.3657 4.38149 18.693 4.59594 19.0429 4.94582C19.3928 5.29571 19.6072 5.63431 19.7991 6.09706C19.9345 6.45824 20.0925 6.97743 20.1377 7.95937C20.1828 9.00903 20.1941 9.32506 20.1941 12C20.1941 14.6637 20.1941 14.9797 20.1377 16.0406C20.1314 16.6724 20.0169 17.2985 19.7991 17.8916C19.6185 18.3657 19.3928 18.693 19.0429 19.0429C18.7043 19.3928 18.3657 19.6072 17.8916 19.7878C17.2992 20.0094 16.6731 20.1278 16.0406 20.1377C14.9797 20.1828 14.6637 20.1941 12 20.1941C9.32506 20.1941 9.00903 20.1941 7.95937 20.1377C7.3238 20.1322 6.69388 20.0177 6.09706 19.7991C5.63431 19.6072 5.307 19.3928 4.94582 19.0429C4.60722 18.7043 4.38149 18.3657 4.2009 17.8916C3.98313 17.2985 3.8686 16.6724 3.8623 16.0406C3.80587 14.9797 3.79458 14.6637 3.79458 12C3.79458 9.32506 3.80587 9.00903 3.85102 7.95937C3.85602 7.32375 3.97057 6.69376 4.18962 6.09706C3.98149 5.63431 4.59594 5.307 4.94582 4.94582C5.29571 4.60722 5.62302 4.38149 6.09706 4.2009C6.69376 3.98185 7.32375 3.86731 7.95937 3.8623C8.87359 3.81716 9.23476 3.80587 11.0971 3.79458V3.80587ZM17.3386 5.46501C17.1815 5.46501 17.0259 5.49596 16.8808 5.55608C16.7356 5.6162 16.6037 5.70433 16.4926 5.81542C16.3815 5.92652 16.2934 6.05841 16.2333 6.20356C16.1732 6.34871 16.1422 6.50429 16.1422 6.6614C16.1422 6.81851 16.1732 6.97408 16.2333 7.11924C16.2934 7.26439 16.3815 7.39628 16.4926 7.50737C16.6037 7.61847 16.7356 7.70659 16.8808 7.76672C17.0259 7.82684 17.1815 7.85779 17.3386 7.85779C17.6559 7.85779 17.9602 7.73174 18.1846 7.50737C18.4089 7.28301 18.535 6.9787 18.535 6.6614C18.535 6.3441 18.4089 6.03979 18.1846 5.81542C17.9602 5.59106 17.6559 5.46501 17.3386 5.46501ZM12 6.86456C11.3256 6.86456 10.6578 6.99739 10.0348 7.25547C9.41169 7.51355 8.84556 7.89182 8.36869 8.36869C7.89182 8.84556 7.51355 9.41169 7.25547 10.0348C6.99739 10.6578 6.86456 11.3256 6.86456 12C6.86456 12.6744 6.99739 13.3422 7.25547 13.9652C7.51355 14.5883 7.89182 15.1544 8.36869 15.6313C8.84556 16.1082 9.41169 16.4864 10.0348 16.7445C10.6578 17.0026 11.3256 17.1354 12 17.1354C13.362 17.1354 14.6682 16.5944 15.6313 15.6313C16.5944 14.6682 17.1354 13.362 17.1354 12C17.1354 10.638 16.5944 9.33178 15.6313 8.36869C14.6682 7.40561 13.362 6.86456 12 6.86456ZM12 8.67043C12.4372 8.67043 12.8702 8.75655 13.2742 8.92388C13.6781 9.0912 14.0452 9.33646 14.3544 9.64564C14.6635 9.95482 14.9088 10.3219 15.0761 10.7258C15.2434 11.1298 15.3296 11.5628 15.3296 12C15.3296 12.4372 15.2434 12.8702 15.0761 13.2742C14.9088 13.6781 14.6635 14.0452 14.3544 14.3544C14.0452 14.6635 13.6781 14.9088 13.2742 15.0761C12.8702 15.2434 12.4372 15.3296 12 15.3296C11.1169 15.3296 10.2701 14.9788 9.64564 14.3544C9.02122 13.7299 8.67043 12.8831 8.67043 12C8.67043 11.1169 9.02122 10.2701 9.64564 9.64564C10.2701 9.02122 11.1169 8.67043 12 8.67043Z"/>
+                    </svg>
+                </a>
+                <a href="https://tiktok.com/@_dont_know_yet" target="_blank" rel="noopener noreferrer" class="social-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.9453 8.68918V15.6727C15.9453 19.1598 13.1048 22.0004 9.6177 22.0004C8.27369 22.0004 7.01685 21.5717 5.99251 20.8525C4.35796 19.7047 3.29004 17.8085 3.29004 15.6727C3.29004 12.1783 6.12333 9.34505 9.6104 9.34505C9.90101 9.34505 10.1843 9.36685 10.4676 9.40318V12.9121H10.4386C10.3151 12.8758 10.1843 12.8394 10.0536 12.8177H9.9954C9.86466 12.8032 9.74114 12.7813 9.60309 12.7813C8.00491 12.7813 6.70448 14.0817 6.70448 15.6799C6.70448 17.2782 8.00491 18.5786 9.60309 18.5786C11.2014 18.5786 12.5018 17.2782 12.5018 15.6799V2.00037H15.938C15.938 2.29822 15.9671 2.58881 16.0179 2.87213C16.2649 4.1798 17.035 5.30584 18.1175 6.01053C18.873 6.50452 19.7593 6.78785 20.7182 6.78785V10.2241C18.9416 10.2241 17.288 9.65222 15.9453 8.68918Z"/>
+                    </svg>
+                </a>
+                <a href="https://x.com/2_zilk" target="_blank" rel="noopener noreferrer" class="social-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.8048 2.96973H20.8705L14.1394 10.6338L22.0034 21.0304H15.8321L11.0004 14.7125L5.46893 21.0304H2.40328L9.53424 12.8331L2.00342 2.96973H8.32798L12.6932 8.74114L17.8048 2.96973ZM16.7318 19.231H18.4313L7.43494 4.70248H5.60888L16.7318 19.231Z"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/Fraczdev" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub (solxmn)">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0.5C5.73 0.5 0.5 5.73 0.5 12c0 5.09 3.29 9.4 7.86 10.93.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.19 1.78 1.19 1.03 1.77 2.71 1.26 3.37.96.11-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .98-.31 3.2 1.18.93-.26 1.93-.39 2.92-.39.99 0 1.99.13 2.92.39 2.22-1.49 3.2-1.18 3.2-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.67.41.35.78 1.05.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.55A10.51 10.51 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5z"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="media-player" id="mediaPlayer">
+                <div class="player-row">
+                    <button class="play-button" id="playBtn" aria-label="Play/Pause">
+                        <span class="icon-play"></span>
+                        <span class="icon-pause"></span>
+                    </button>
+                    <div class="progress-container" id="progressContainer" aria-label="Seek">
+                        <div class="progress-base">
+                            <svg viewBox="0 0 520 14" preserveAspectRatio="none">
+                                <path d="M4 7 L516 7"/>
+                            </svg>
+                        </div>
+                        <div class="progress-fill" id="progressFill" style="width:0%">
+                            <svg viewBox="0 0 520 14" preserveAspectRatio="none">
+                                <path d="M4 7 L516 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="time-text" id="timeText">00:00</div>
+                </div>
+                <div class="track-meta">
+                    <div class="track-title" id="titleText">Title</div>
+                    <div class="track-artist" id="artistText">Artist</div>
+                </div>
+                <audio id="audioEl" preload="metadata"></audio>
+            </div>
+            
+            <div class="scroll-prompt" id="scrollPrompt" aria-hidden="false">
+                <div class="prompt-text">Scroll down for more details</div>
+                <div class="arrow" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="22" y="6" width="4" height="26" fill="#ffffff" rx="2"/>
+                        <path d="M24 44 L14 34 H34 Z" fill="#ffffff"/>
+                    </svg>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="about-skills-grid">
+    <section class="section" id="about">
+        <div class="section-inner" aria-labelledby="about-title">
+            <div class="ascii-card">
+                <div class="ascii-title">[ DEV ]</div>
+                <h2 id="about-title">DEV PORTFOLIO</h2>
+                <div class="about-grid">
+                    <div class="card-block">
+                                                <h3><span class="tag">&lt;about-tab&gt;</span> About Me <span class="tag tag-close">&lt;/about-tab&gt;</span></h3>
+                        <pre class="ascii-sep">______________________</pre>
+                        <p class="muted">I am a software developer focused on building clean, reliable apps with Python and JavaScript/TypeScript. I deliver across the stack—React/Next.js and Node, APIs (FastAPI/Django, Express), databases (PostgreSQL/SQLite), and tooling (Git, Docker, Linux)—and I care about collaboration, clarity, and maintainable code.</p>
+                        <p class="muted" style="margin-top: 0.75rem;">Lately, I have been tinkering with GameMaker Language (GML) and game-making for fun, but my main focus is still general software development.</p>
+                        <pre class="ascii-sep">______________________</pre>                        <dl class="kv">
+                        </dl>
+                        <h3><span class="tag">&lt;hobbies&gt;</span> Hobbies<span class="tag tag-close">&lt;/hobbies&gt;</span></h3>
+                        <ul>
+                            <li>Editing</li>
+                            <li>Indie (& non) games</li>
+                            <li>Discovering new music</li>
+                        </ul>
+                        
+                    </div>
+                    <div class="card-block">
+                        <h3><span class="tag">&lt;languages&gt;</span> Languages I Speak <span class="tag tag-close">&lt;/languages&gt;</span></h3>
+                        <p class="spoken-langs">🇮🇹Italian<br/>🇺🇸English</p>
+                        <pre class="ascii-sep">______________________</pre>
+                        <h3 class="section-header">
+                            <span class="title-with-hearts">
+                                <span class="tag">&lt;inspiration&gt;</span>
+                                <svg class="heart-inline" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fe0000" d="M2 0h2v1h2v1h1v2h2v-2h1v-1h2v-1h2v1h1v1h1v8h-2v2h-2v2h-2v2h-4v-2h-2v-2h-2v-2h-2v-8h1v-1h1v-1z"/></svg>
+                                INSPIRATION
+                                <svg class="heart-inline" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fe0000" d="M2 0h2v1h2v1h1v2h2v-2h1v-1h2v-1h2v1h1v1h1v8h-2v2h-2v2h-2v2h-4v-2h-2v-2h-2v-2h-2v-8h1v-1h1v-1z"/></svg>
+                                <span class="tag tag-close">&lt;/inspiration&gt;</span>
+                            </span>
+                        </h3>
+                        <p class="muted">UNDERTALE and DELTARUNE pulled me into code.</p>
+                        <p class="muted" id="redactedText" style="margin-top: 0.75rem; display: none;">[Redacted. Click on the profile picture.]</p>
+                        <p class="muted" id="fullInspirationText" style="margin-top: 0.75rem; display: block;">To make the new design, I took inspiration from his projects, especially UNDERTALE. So, this site is me practicing those lessons: If my work feels even a fraction as alive as those games, I know I am on the right track.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="skills">
+        <div class="section-inner" aria-labelledby="skills-title">
+            <div class="ascii-card">
+                <div class="ascii-title">[ DEV ]</div>
+                <h2 id="skills-title">Skills</h2>
+                <p class="muted">Here are the tools and technologies I use most often.</p>
+
+                <div class="skills-grid" role="list">
+                <div class="skill-card" role="listitem">
+                    <h3>Languages</h3>
+                    <div class="skill-row"><span class="skill-name">Python</span><span class="level" aria-label="Python: 4 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">JavaScript</span><span class="level" aria-label="JavaScript: 3 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">TypeScript</span><span class="level" aria-label="TypeScript: 3 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">Node.js</span><span class="level" aria-label="Node.js: 3 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">React</span><span class="level" aria-label="React: 3 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">HTML</span><span class="level" aria-label="HTML: 3 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">CSS</span><span class="level" aria-label="CSS: 3 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">C</span><span class="level" aria-label="C: 2 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    <div class="skill-row"><span class="skill-name">GML</span><span class="level" aria-label="GML: 2 out of 5"><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+                    
+                </div>
+
+                <div class="skill-card" role="listitem">
+                    <h3>Frameworks</h3>
+                    <div class="skill-badges">
+                        <span class="badge">Next.js</span>
+                        <span class="badge">Vue</span>
+                        <span class="badge">Angular</span>
+                        <span class="badge">Express</span>
+                        <span class="badge">Django</span>
+                        <span class="badge">Flask</span>
+                        <span class="badge">FastAPI</span>
+                        <span class="badge">PyTorch</span>
+                    </div>
+                </div>
+
+                <div class="skill-card" role="listitem">
+                    <h3>Tools</h3>
+                    <div class="skill-badges">
+                        <span class="badge">Git</span>
+                        <span class="badge">GitHub</span>
+                        <span class="badge">VS Code</span>
+                        <span class="badge">Netlify</span>
+                        <span class="badge">Docker</span>
+                        <span class="badge">Linux</span>
+                        <span class="badge">WSL</span>
+                        <span class="badge">npm</span>
+                        <span class="badge">Yarn</span>
+                        <span class="badge">pnpm</span>
+                        <span class="badge">ESLint</span>
+                        <span class="badge">Prettier</span>
+                        <span class="badge">Postman</span>
+                        <span class="badge">Figma</span>
+                    </div>
+                </div>
+
+                <div class="skill-card" role="listitem">
+                    <h3>Databases</h3>
+                    <div class="skill-badges">
+                        <span class="badge">SQLite</span>
+                        <span class="badge">PostgreSQL</span>
+                        <span class="badge">IndexedDB</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <div class="qr-code">
+        <p class="qr-text">View on mobile</p>
+        <div class="qr-image" id="qr-code-container">
+            <img src="static/images/QR.png" alt="QR Code" style="width: 100px; height: 100px;">
+        </div>
+    </div>
+
+    <section class="section" id="projects">
+        <div class="section-inner" aria-labelledby="projects-title">
+            <div class="ascii-card">
+                <div class="ascii-title">[ DEV ]</div>
+                <h2 id="projects-title">Projects</h2>
+                <div class="marquee" aria-label="Projects are coming soon">
+                    <div class="marquee__track">
+                        
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                        <span class="marquee__item muted">come back soon!</span><span class="marquee__item muted" aria-hidden="true"> - </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

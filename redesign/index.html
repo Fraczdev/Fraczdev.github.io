@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>solxmn | UNDERTALE / DELTARUNE cut</title>
+    <link rel="preload" as="font" href="./assets/fonts/DeterminationMonoWebRegular-Z5oq.ttf" type="font/ttf" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+        // Check if this is the first visit to trigger unlock celebration
+        const hasVisited = localStorage.getItem('visitedRedesign') === 'true';
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const questionOverlay = document.getElementById('questionOverlay');
+            const seasonalAudio = document.getElementById('seasonalAudio');
+            
+            if (!hasVisited) {
+                // First visit - show question mark
+                // Pause audio to prevent overlap
+                if (seasonalAudio) {
+                    seasonalAudio.pause();
+                }
+                
+                const questionMark = document.getElementById('questionMark');
+                
+                questionMark.addEventListener('click', () => {
+                    // Mark as visited
+                    localStorage.setItem('visitedRedesign', 'true');
+                    
+                    // Hide question overlay
+                    questionOverlay.style.display = 'none';
+                    
+                    // Play golden key sound
+                    const audio = new Audio('../golden_key.wav');
+                    audio.volume = 0.4;
+                    audio.play().catch(err => console.log('Audio play failed:', err));
+                    
+                    // Show unlock popup animation
+                    const popup = document.createElement('div');
+                    popup.className = 'unlock-popup';
+                    popup.innerHTML = '<img src="../unlock.png" alt="Unlocked!">';
+                    document.body.appendChild(popup);
+                    
+                    // Resume seasonal audio after unlock animation completes
+                    setTimeout(() => {
+                        popup.remove();
+                        if (seasonalAudio) {
+                            seasonalAudio.play().catch(err => console.log('Audio resume failed:', err));
+                        }
+                    }, 2500);
+                });
+            } else {
+                // Already visited - hide overlay immediately
+                questionOverlay.style.display = 'none';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="questionOverlay" class="question-overlay" role="dialog" aria-modal="true">
+        <div id="questionMark" class="question-mark">?</div>
+    </div>
+
+    <div id="mobileOverlay" role="dialog" aria-modal="true">
+        <div class="overlay-inner">
+            <p class="overlay-title">Desktop recommended</p>
+            <p class="overlay-text">This site is built for keyboard + large screens. You can still explore, but the layout truly shines on desktop.</p>
+            <button type="button" id="overlayContinue" class="overlay-continue">Continue anyway</button>
+        </div>
+    </div>
+
+    <div class="border-environment" id="borderEnvironment" aria-hidden="true"></div>
+
+    <main class="stage" role="main">
+        <div class="season-heart" id="seasonHeart" aria-hidden="true">
+            <img src="./assets/inspiration-tagline/red-heart.png" alt="" />
+            <div class="heart-label">click me to go back</div>
+        </div>
+        <div class="stage-frame" role="region" aria-label="retro terminal">
+            <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+            <div id="summerSun" class="summer-sun" aria-hidden="true">
+                <div class="sun-core"></div>
+            </div>
+            <header class="stage-header">
+                <h1 class="panel-title" id="panelTitle">ABOUT</h1>
+            </header>
+
+            <div class="stage-grid">
+                <section class="stage-column left" aria-label="Languages and inspiration">
+                    <div class="card languages-card">
+                        <div class="card-title with-hearts">
+                            <span>LANGUAGES I SPEAK</span>
+                        </div>
+                        <ul class="language-list">
+                            <li><span class="flag" aria-hidden="true">🇮🇹</span><span class="lang-label">Italian</span></li>
+                            <li><span class="flag" aria-hidden="true">🇺🇸</span><span class="lang-label">English</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="card inspiration-card">
+                        <div class="card-title with-hearts">
+                            <img src="./assets/inspiration-tagline/red-heart.png" alt="pixel heart" />
+                            <span>INSPIRATION</span>
+                            <img src="./assets/inspiration-tagline/red-heart.png" alt="pixel heart" />
+                        </div>
+                        <p>UNDERTALE and DELTARUNE pulled me into code. Toby Fox's worlds and the soundtrack energy set the tone for this entire space.</p>
+                        <button class="ghost-btn" id="inspirationToggle" type="button">Show More</button>
+                    </div>
+
+                    <div class="card hobbies-card">
+                        <div class="card-title">HOBBIES</div>
+                        <ul>
+                            <li>Editing</li>
+                            <li>Indie (& non) games</li>
+                            <li>Discovering new music</li>
+                        </ul>
+                    </div>
+
+                    <div class="social-row" aria-label="Social links">
+                            <a href="https://github.com/Fraczdev" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 0.5C5.73 0.5 0.5 5.73 0.5 12c0 5.09 3.29 9.4 7.86 10.93.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.19 1.78 1.19 1.03 1.77 2.71 1.26 3.37.96.11-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .98-.31 3.2 1.18.93-.26 1.93-.39 2.92-.39.99 0 1.99.13 2.92.39 2.22-1.49 3.2-1.18 3.2-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.67.41.35.78 1.05.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.55A10.51 10.51 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5z"></path>
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/soxl.mn/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 2C9.2912 2 8.94131 2 7.86907 2.05643C7.03985 2.07241 6.21934 2.22888 5.44244 2.51919C4.78781 2.77878 4.23476 3.11738 3.67043 3.68172C3.11738 4.23476 2.76749 4.78781 2.51919 5.45372C2.27088 6.08578 2.10158 6.80813 2.05643 7.88036C2.01129 8.94131 2 9.27991 2 12C2 14.7088 2 15.0474 2.05643 16.1196C2.10158 17.1919 2.28217 17.9255 2.51919 18.5576C2.77878 19.2122 3.11738 19.7652 3.67043 20.3296C4.23476 20.8826 4.78781 21.2325 5.44244 21.4808C6.08578 21.7291 6.80813 21.8984 7.86907 21.9436C8.94131 21.9887 9.27991 22 12 22C14.7088 22 15.0474 22 16.1196 21.9436C17.1806 21.8984 17.9142 21.7178 18.5463 21.4808C19.2137 21.2306 19.8184 20.8377 20.3183 20.3296C20.8826 19.7652 21.2212 19.2009 21.4695 18.5576C21.7178 17.9142 21.8871 17.1919 21.9436 16.1196C21.9887 15.0587 22 14.7201 22 12C22 9.2912 21.9887 8.9526 21.9436 7.88036C21.9225 7.05065 21.7622 6.23037 21.4695 5.45372C21.2189 4.78649 20.8261 4.18182 20.3183 3.68172C19.754 3.11738 19.2122 2.77878 18.5463 2.51919C17.7686 2.23315 16.9482 2.08051 16.1196 2.06772C15.0474 2.01129 14.7088 2 12 2ZM11.0971 3.80587H12C14.6637 3.80587 14.9797 3.80587 16.0406 3.8623C16.6724 3.8686 17.2985 3.98313 17.8916 4.2009C18.3657 4.38149 18.693 4.59594 19.0429 4.94582C19.3928 5.29571 19.6072 5.63431 19.7991 6.09706C19.9345 6.45824 20.0925 6.97743 20.1377 7.95937C20.1828 9.00903 20.1941 9.32506 20.1941 12C20.1941 14.6637 20.1941 14.9797 20.1377 16.0406C20.1314 16.6724 20.0169 17.2985 19.7991 17.8916C19.6185 18.3657 19.3928 18.693 19.0429 19.0429C18.7043 19.3928 18.3657 19.6072 17.8916 19.7878C17.2992 20.0094 16.6731 20.1278 16.0406 20.1377C14.9797 20.1828 14.6637 20.1941 12 20.1941C9.32506 20.1941 9.00903 20.1941 7.95937 20.1377C7.3238 20.1322 6.69388 20.0177 6.09706 19.7991C5.63431 19.6072 5.307 19.3928 4.94582 19.0429C4.60722 18.7043 4.38149 18.3657 4.2009 17.8916C3.98313 17.2985 3.8686 16.6724 3.8623 16.0406C3.80587 14.9797 3.79458 14.6637 3.79458 12C3.79458 9.32506 3.80587 9.00903 3.85102 7.95937C3.85602 7.32375 3.97057 6.69376 4.18962 6.09706C3.98149 5.63431 4.59594 5.307 4.94582 4.94582C5.29571 4.60722 5.62302 4.38149 6.09706 4.2009C6.69376 3.98185 7.32375 3.86731 7.95937 3.8623C8.87359 3.81716 9.23476 3.80587 11.0971 3.79458V3.80587ZM17.3386 5.46501C17.1815 5.46501 17.0259 5.49596 16.8808 5.55608C16.7356 5.6162 16.6037 5.70433 16.4926 5.81542C16.3815 5.92652 16.2934 6.05841 16.2333 6.20356C16.1732 6.34871 16.1422 6.50429 16.1422 6.6614C16.1422 6.81851 16.1732 6.97408 16.2333 7.11924C16.2934 7.26439 16.3815 7.39628 16.4926 7.50737C16.6037 7.61847 16.7356 7.70659 16.8808 7.76672C17.0259 7.82684 17.1815 7.85779 17.3386 7.85779C17.6559 7.85779 17.9602 7.73174 18.1846 7.50737C18.4089 7.28301 18.535 6.9787 18.535 6.6614C18.535 6.3441 18.4089 6.03979 18.1846 5.81542C17.9602 5.59106 17.6559 5.46501 17.3386 5.46501ZM12 6.86456C11.3256 6.86456 10.6578 6.99739 10.0348 7.25547C9.41169 7.51355 8.84556 7.89182 8.36869 8.36869C7.89182 8.84556 7.51355 9.41169 7.25547 10.0348C6.99739 10.6578 6.86456 11.3256 6.86456 12C6.86456 12.6744 6.99739 13.3422 7.25547 13.9652C7.51355 14.5883 7.89182 15.1544 8.36869 15.6313C8.84556 16.1082 9.41169 16.4864 10.0348 16.7445C10.6578 17.0026 11.3256 17.1354 12 17.1354C13.362 17.1354 14.6682 16.5944 15.6313 15.6313C16.5944 14.6682 17.1354 13.362 17.1354 12C17.1354 10.638 16.5944 9.33178 15.6313 8.36869C14.6682 7.40561 13.362 6.86456 12 6.86456ZM12 8.67043C12.4372 8.67043 12.8702 8.75655 13.2742 8.92388C13.6781 9.0912 14.0452 9.33646 14.3544 9.64564C14.6635 9.95482 14.9088 10.3219 15.0761 10.7258C15.2434 11.1298 15.3296 11.5628 15.3296 12C15.3296 12.4372 15.2434 12.8702 15.0761 13.2742C14.9088 13.6781 14.6635 14.0452 14.3544 14.3544C14.0452 14.6635 13.6781 14.9088 13.2742 15.0761C12.8702 15.2434 12.4372 15.3296 12 15.3296C11.1169 15.3296 10.2701 14.9788 9.64564 14.3544C9.02122 13.7299 8.67043 12.8831 8.67043 12C8.67043 11.1169 9.02122 10.2701 9.64564 9.64564C10.2701 9.02122 11.1169 8.67043 12 8.67043Z"></path>
+                            </svg>
+                        </a>
+                        <a href="https://tiktok.com/@_dont_know_yet" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M15.9453 8.68918V15.6727C15.9453 19.1598 13.1048 22.0004 9.6177 22.0004C8.27369 22.0004 7.01685 21.5717 5.99251 20.8525C4.35796 19.7047 3.29004 17.8085 3.29004 15.6727C3.29004 12.1783 6.12333 9.34505 9.6104 9.34505C9.90101 9.34505 10.1843 9.36685 10.4676 9.40318V12.9121H10.4386C10.3151 12.8758 10.1843 12.8394 10.0536 12.8177H9.9954C9.86466 12.8032 9.74114 12.7813 9.60309 12.7813C8.00491 12.7813 6.70448 14.0817 6.70448 15.6799C6.70448 17.2782 8.00491 18.5786 9.60309 18.5786C11.2014 18.5786 12.5018 17.2782 12.5018 15.6799V2.00037H15.938C15.938 2.29822 15.9671 2.58881 16.0179 2.87213C16.2649 4.1798 17.035 5.30584 18.1175 6.01053C18.873 6.50452 19.7593 6.78785 20.7182 6.78785V10.2241C18.9416 10.2241 17.288 9.65222 15.9453 8.68918Z"></path>
+                            </svg>
+                        </a>
+                        <a href="https://x.com/2_zilk" target="_blank" rel="noopener noreferrer" aria-label="X">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M17.8048 2.96973H20.8705L14.1394 10.6338L22.0034 21.0304H15.8321L11.0004 14.7125L5.46893 21.0304H2.40328L9.53424 12.8331L2.00342 2.96973H8.32798L12.6932 8.74114L17.8048 2.96973ZM16.7318 19.231H18.4313L7.43494 4.70248H5.60888L16.7318 19.231Z"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="card now-playing-card is-idle" id="nowPlayingCard" aria-live="polite">
+                        <p class="now-playing-label">NOW PLAYING</p>
+                        <p class="now-playing-track" id="nowPlayingTitle">Seasonal OST warming up…</p>
+                        <p class="now-playing-artist" id="nowPlayingArtist">Interact to unlock the track.</p>
+                        <p class="now-playing-season" id="nowPlayingSeason">Awaiting season fetch</p>
+                        <div class="now-playing-bars" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <button class="audio-toggle" id="audioToggle" type="button" aria-pressed="false" disabled>
+                        Play music
+                    </button>
+
+                    <button class="border-toggle" id="borderToggle" type="button">
+                        <span class="border-label">BORDER:</span>
+                        <span id="borderName">Simple</span>
+                    </button>
+                </section>
+
+                <section class="stage-column center" aria-live="polite">
+                    <div class="content-window" id="contentWindow">
+                        <article class="content-panel is-active content-panel--about" id="panel-about" data-panel="about" tabindex="0">
+                            <div class="about-copy">
+                                <p>I am a software developer focused on building clean, reliable apps with Python and JavaScript/TypeScript. I deliver across the stack&mdash;React/Next.js and Node, APIs (FastAPI/Django, Express), databases (PostgreSQL/SQLite), and tooling (Git, Docker, Linux)&mdash;and I care about collaboration, clarity, and maintainable code.</p>
+                            </div>
+
+                            <div class="about-sidebar">
+                                <div class="skills-block primary-skill-block">
+                                    <h3>Languages & stacks</h3>
+                                    <ul class="skill-levels">
+                                        <li><span>Python</span><span class="dots" aria-label="Python  four out of five">● ● ● ● ○</span></li>
+                                        <li><span>JavaScript</span><span class="dots" aria-label="JavaScript  three out of five">● ● ● ○ ○</span></li>
+                                        <li><span>TypeScript</span><span class="dots" aria-label="TypeScript  three out of five">● ● ● ○ ○</span></li>
+                                        <li><span>Node.js</span><span class="dots" aria-label="Node.js  three out of five">● ● ● ○ ○</span></li>
+                                        <li><span>React</span><span class="dots" aria-label="React  three out of five">● ● ● ○ ○</span></li>
+                                        <li><span>HTML</span><span class="dots" aria-label="HTML  three out of five">● ● ● ○ ○</span></li>
+                                        <li><span>CSS</span><span class="dots" aria-label="CSS three out of five">● ● ● ○ ○</span></li>
+                                        <li><span>C</span><span class="dots" aria-label="C  two out of five">● ● ○ ○ ○</span></li>
+                                        <li><span>GML</span><span class="dots" aria-label="GML  two out of five">● ● ○ ○ ○</span></li>
+                                    </ul>
+                                </div>
+
+                                <div class="skills-card-grid">
+                                    <div class="skill-card">
+                                        <h3>Frameworks</h3>
+                                        <ul class="pill-list">
+                                            <li>Next.js</li>
+                                            <li>Vue</li>
+                                            <li>Angular</li>
+                                            <li>Express</li>
+                                            <li>Django</li>
+                                            <li>Flask</li>
+                                            <li>FastAPI</li>
+                                            <li>PyTorch</li>
+                                        </ul>
+                                    </div>
+                                    <div class="skill-card">
+                                        <h3>Tools & platforms</h3>
+                                        <ul class="pill-list">
+                                            <li>Git</li>
+                                            <li>GitHub</li>
+                                            <li>VS Code</li>
+                                            <li>Netlify</li>
+                                            <li>Docker</li>
+                                            <li>Linux</li>
+                                            <li>WSL</li>
+                                            <li>npm</li>
+                                            <li>Yarn</li>
+                                            <li>pnpm</li>
+                                            <li>ESLint</li>
+                                            <li>Prettier</li>
+                                            <li>Postman</li>
+                                            <li>Figma</li>
+                                        </ul>
+                                    </div>
+                                    <div class="skill-card">
+                                        <h3>Databases</h3>
+                                        <ul class="pill-list">
+                                            <li>SQLite</li>
+                                            <li>PostgreSQL</li>
+                                            <li>IndexedDB</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="about-lately">Lately, I have been tinkering with GameMaker Language (GML) and game-making for fun, but my main focus is still general software development.</p>
+                        </article>
+
+                        <article class="content-panel content-panel--projects" id="panel-projects" data-panel="projects" tabindex="0">
+                            <p>Project cards are in progress, so please come back soon for a proper showcase.</p>
+                            <div class="marquee" aria-hidden="true">
+                                <div class="marquee-track">
+                                    <span>come back soon!&nbsp;&mdash;&nbsp;come back soon!&nbsp;&mdash;&nbsp;come back soon!&nbsp;&mdash;&nbsp;come back soon!&nbsp;&mdash;&nbsp;</span>
+                                    <span aria-hidden="true">come back soon!&nbsp;&mdash;&nbsp;come back soon!&nbsp;&mdash;&nbsp;come back soon!&nbsp;&mdash;&nbsp;come back soon!&nbsp;&mdash;&nbsp;</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="content-panel content-panel--contact" id="panel-contact" data-panel="contact" tabindex="0">
+                            <div class="contact-content-wrapper">
+                                <p>Best way to reach me is through the socials on the left. Instagram DMs are fastest, X is close behind, and GitHub issues or email works for more formal chats.</p>
+                                <ul class="contact-methods">
+                                    <li>Instagram: <a href="https://www.instagram.com/soxl.mn/" target="_blank" rel="noopener noreferrer">@soxl.mn</a></li>
+                                    <li>TikTok: <a href="https://tiktok.com/@_dont_know_yet" target="_blank" rel="noopener noreferrer">@_dont_know_yet</a></li>
+                                    <li>X: <a href="https://x.com/2_zilk" target="_blank" rel="noopener noreferrer">@2_zilk</a></li>
+                                    <li>GitHub: <a href="https://github.com/Fraczdev" target="_blank" rel="noopener noreferrer">Fraczdev</a></li>
+                                </ul>
+                                <p>Feel free to ask about freelancing, working together, or just chat.</p>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="inspiration-overlay" id="inspirationOverlay" aria-hidden="true">
+                        <div class="overlay-content">
+                            <button type="button" class="ghost-btn overlay-close" id="inspirationClose">Close</button>
+                            <button type="button" class="overlay-heartline" id="secretBorderToggle" aria-pressed="false">
+                                <img src="./assets/inspiration-tagline/red-heart.png" alt="pixel heart" />
+                                <span class="overlay-heartline__text">UNDERTALE / DELTARUNE</span>
+                                <img src="./assets/inspiration-tagline/red-heart.png" alt="pixel heart" />
+                            </button>
+                                    <p>UNDERTALE taught me so many things, from game stuff to how to treat people in real life. DELTARUNE, well, is a whole different story. It shows you how each person has their own awkward humor, personality & more, and that's what makes them unique. I fell in love with the games' stories since the day I started playing them.</p>
+                            <hr class="overlay-divider" />
+                            <p>This site is me practicing those lessons: If my work feels even a fraction as alive as those games, I know I am on the right track.</p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section class="stage-column right" aria-label="Section navigation">
+                    <div class="nav-stack" aria-label="Navigation controls">
+                        <div class="clock-display" id="clockDisplay">
+                            <p class="clock-label">CLOCK</p>
+                            <p class="clock-time"><span id="clockHours">--</span>:<span id="clockMinutes">--</span><span class="clock-seconds" id="clockSeconds">:--</span></p>
+                            <p class="clock-tz">(UTC + 1)</p>
+                        </div>
+                        <nav class="menu-buttons" aria-label="Primary tabs">
+                            <button class="menu-btn is-active" data-panel="about" aria-controls="panel-about" aria-pressed="true">
+                                <img src="./assets/buttons/about_nobg.png" alt="About" class="btn-img normal" />
+                                <img src="./assets/buttons/about_selected_nobg.png" alt="About selected" class="btn-img selected" aria-hidden="true" />
+                            </button>
+                            <button class="menu-btn" data-panel="projects" aria-controls="panel-projects" aria-pressed="false">
+                                <img src="./assets/buttons/projects_nobg.png" alt="Projects" class="btn-img normal" />
+                                <img src="./assets/buttons/projects_selected_nobg.png" alt="Projects selected" class="btn-img selected" aria-hidden="true" />
+                            </button>
+                            <button class="menu-btn" data-panel="contact" aria-controls="panel-contact" aria-pressed="false">
+                                <img src="./assets/buttons/contact_me_nobg.png" alt="Contact" class="btn-img normal" />
+                                <img src="./assets/buttons/contact_me_selected_nobg.png" alt="Contact selected" class="btn-img selected" aria-hidden="true" />
+                            </button>
+                        </nav>
+                        <div class="menu-filler" aria-hidden="true">
+                            <p class="filler-title">TIPS</p>
+                            <p class="filler-tip">Tap BORDER to shuffle skins.</p>
+                            <p class="filler-note">Enjoy your stay.</p>
+                            <p class="orbit-text orbit-text--sidebar" id="enjoyOrbit"><span>please enjoy my portfolio!</span></p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <audio id="seasonalAudio" preload="auto" loop></audio>
+
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
