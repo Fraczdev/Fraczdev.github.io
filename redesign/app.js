@@ -28,6 +28,46 @@ const contentWindow = document.getElementById("contentWindow");
 const clockTime = document.getElementById("clockTime");
 let contentHeightFrame = null;
 let persistentPanelHeight = 0;
+let currentStageScale = Number.NaN;
+
+const DESIGN_STAGE_WIDTH = 1270;
+const DESIGN_STAGE_HEIGHT = 1040;
+const MIN_STAGE_SCALE = 0.68;
+const MAX_STAGE_SCALE = 1.18;
+
+function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+}
+
+function syncViewportScale() {
+    if (!stageRoot) return;
+    const viewport = window.visualViewport;
+    const viewportWidth = viewport?.width ?? window.innerWidth;
+    const viewportHeight = viewport?.height ?? window.innerHeight;
+    const bodyStyles = getComputedStyle(document.body);
+    const bodyHorizontalPadding = (parseFloat(bodyStyles.paddingLeft) || 0) + (parseFloat(bodyStyles.paddingRight) || 0);
+    const bodyVerticalPadding = (parseFloat(bodyStyles.paddingTop) || 0) + (parseFloat(bodyStyles.paddingBottom) || 0);
+    const availableWidth = Math.max(0, viewportWidth - bodyHorizontalPadding);
+    const availableHeight = Math.max(0, viewportHeight - bodyVerticalPadding);
+    const nextScale = clamp(
+        Math.min(availableWidth / DESIGN_STAGE_WIDTH, availableHeight / DESIGN_STAGE_HEIGHT),
+        MIN_STAGE_SCALE,
+        MAX_STAGE_SCALE
+    );
+
+    if (!Number.isFinite(nextScale)) return;
+    if (!Number.isNaN(currentStageScale) && Math.abs(nextScale - currentStageScale) < 0.0005) return;
+
+    currentStageScale = nextScale;
+    document.documentElement.style.setProperty("--stage-scale", nextScale.toFixed(4));
+    persistentPanelHeight = 0;
+
+    if (particleField) {
+        particleField.handleResize();
+    }
+
+    scheduleContentWindowHeight();
+}
 
 const panelLabels = {
     about: "ABOUT",
@@ -246,6 +286,7 @@ panelButtons.forEach((btn, index) => {
 });
 
 setActivePanel(currentPanel);
+syncViewportScale();
 refreshContentWindowHeight();
 
 function lengthToPixels(lengthValue) {
@@ -754,7 +795,10 @@ overlayContinue?.addEventListener("click", () => {
     syncOverlayVisibility();
 });
 
+window.addEventListener("resize", syncViewportScale);
+window.addEventListener("orientationchange", syncViewportScale);
 window.addEventListener("resize", syncOverlayVisibility);
 syncOverlayVisibility();
 window.addEventListener("resize", scheduleContentWindowHeight);
 window.addEventListener("load", refreshContentWindowHeight);
+window.addEventListener("load", syncViewportScale);
