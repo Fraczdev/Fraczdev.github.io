@@ -62,6 +62,22 @@ const DESIGN_STAGE_WIDTH = 1270;
 const DESIGN_STAGE_HEIGHT = 1040;
 const MIN_STAGE_SCALE = 0.68;
 const MAX_STAGE_SCALE = 1.18;
+const VISIT_FLAG_KEY = 'visitedRedesign';
+
+function readVisitFlag() {
+    try {
+        if (localStorage.getItem(VISIT_FLAG_KEY) === 'true') return true;
+    } catch (error) {
+        // noop
+    }
+    try {
+        if (sessionStorage.getItem(VISIT_FLAG_KEY) === 'true') return true;
+    } catch (error) {
+        // noop
+    }
+    const cookieMatch = document.cookie.match(new RegExp('(?:^|; )' + VISIT_FLAG_KEY + '=([^;]*)'));
+    return cookieMatch?.[1] === 'true';
+}
 
 function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -708,7 +724,7 @@ async function configureSeasonalAudio(seasonName) {
     updateAudioToggle();
 
     // Only auto-resume audio playback if already visited
-    const hasVisited = localStorage.getItem('visitedRedesign') === 'true';
+    const hasVisited = readVisitFlag();
     if (!hasVisited) {
         return;
     }
