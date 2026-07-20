@@ -547,7 +547,7 @@ const seasonalTracks = {
     fall: {
         title: "Uwa!! So Temperate♫",
         artist: "Toby Fox",
-        quote: "spring time\nback to school",
+        quote: "sweep a leaf\nsweep away a troubles",
         files: ["./assets/songs/Uwa!!So Temperate.mp3"]
     }
 };
