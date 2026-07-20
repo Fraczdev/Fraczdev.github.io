@@ -27,6 +27,34 @@ const stageFrame = document.querySelector(".stage-frame");
 const contentWindow = document.getElementById("contentWindow");
 let contentHeightFrame = null;
 let persistentPanelHeight = 0;
+const AUDIO_GAIN_LEVEL = 0.25;
+let audioGainContext = null;
+let audioGainNode = null;
+let audioSourceNode = null;
+
+function ensureAudioGainRouting() {
+    if (!seasonalAudio) return null;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!audioGainContext) {
+        audioGainContext = new AudioContextClass();
+    }
+    if (!audioGainNode) {
+        audioGainNode = audioGainContext.createGain();
+        audioGainNode.gain.value = AUDIO_GAIN_LEVEL;
+    }
+    if (!audioSourceNode) {
+        try {
+            audioSourceNode = audioGainContext.createMediaElementSource(seasonalAudio);
+            audioSourceNode.connect(audioGainNode);
+            audioGainNode.connect(audioGainContext.destination);
+        } catch (error) {
+            return null;
+        }
+    }
+    audioGainNode.gain.setValueAtTime(AUDIO_GAIN_LEVEL, audioGainContext.currentTime);
+    return audioGainContext;
+}
 
 const panelLabels = {
     about: "ABOUT",
@@ -614,7 +642,8 @@ async function configureSeasonalAudio(seasonName) {
     updateAudioToggle();
 
     const resumePlayback = () => {
-        seasonalAudio.volume = 0.35;
+        const audioContext = ensureAudioGainRouting();
+        audioContext?.resume?.().catch(() => {});
         seasonalAudio
             .play()
             .then(() => updateAudioToggle())
@@ -662,7 +691,9 @@ updateAudioToggle();
 
 audioToggle?.addEventListener("click", () => {
     if (!seasonalAudio?.src) return;
+    const audioContext = ensureAudioGainRouting();
     if (seasonalAudio.paused) {
+        audioContext?.resume?.().catch(() => {});
         seasonalAudio
             .play()
             .then(() => {
@@ -677,6 +708,7 @@ audioToggle?.addEventListener("click", () => {
 
 seasonalAudio?.addEventListener("play", () => updateAudioToggle());
 seasonalAudio?.addEventListener("pause", () => updateAudioToggle());
+ensureAudioGainRouting();
 
 function showInspirationOverlay() {
     if (!inspirationOverlay) return;
