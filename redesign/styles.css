@@ -270,7 +270,7 @@ body {
     inset: 0;
     background: linear-gradient(120deg, rgba(255, 103, 120, 0.65), rgba(247, 214, 92, 0.45), rgba(104, 255, 116, 0.55), rgba(97, 216, 255, 0.45), rgba(179, 139, 255, 0.55), rgba(255, 124, 242, 0.6), rgba(255, 103, 120, 0.65));
     background-size: 320% 320%;
-    filter: blur(16px);
+    filter: blur(3px);
     mix-blend-mode: screen;
     animation: secret-border-glow 8s ease-in-out infinite;
     opacity: 0.5;

@@ -722,7 +722,6 @@ async function configureSeasonalAudio(seasonName) {
     audioToggle?.removeAttribute("disabled");
     updateAudioToggle();
 
-    // Only auto-resume audio playback if already visited
     const hasVisited = readVisitFlag();
     if (!hasVisited) {
         return;
