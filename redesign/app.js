@@ -119,7 +119,6 @@ const panelLabels = {
     contact: "CONTACT"
 };
 
-// Initialize clock with Italy timezone (UTC+1)
 const clockHours = document.getElementById('clockHours');
 const clockMinutes = document.getElementById('clockMinutes');
 const clockSeconds = document.getElementById('clockSeconds');
@@ -136,11 +135,11 @@ function updateClock() {
     if (clockSeconds) clockSeconds.textContent = `:${seconds}`;
 }
 
-// Update clock every second
+
 updateClock();
 setInterval(updateClock, 1000);
 
-// Navigate to main portfolio when clicking the season heart
+
 seasonHeart?.addEventListener("click", () => {
     window.location.href = "../";
 });
