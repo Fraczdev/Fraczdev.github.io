@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 	const profileContainer = document.querySelector('.profile-video-container');
-	profileContainer?.addEventListener('click', () => {
-		window.location.href = './question_mark/';
-	});
-
+profileContainer?.addEventListener('click', () => {
+    if (Math.random() < 0.01) {
+        window.location.href = './question_mark/';
+    } else {
+        window.location.href = './redesign/index.html';
+    }
+});
 	const playerRoot = document.getElementById('mediaPlayer');
 	if (!playerRoot) return;
 
