@@ -160,8 +160,8 @@ let isSecretBorderActive = false;
 let previousBorderIndex = 0;
 const secretTrack = {
     title: "...",
-    artist: "You.",
-    quote: "where are you?",
+    artist: "Hint:",
+    quote: "Go where the old meets the new. And if you try a hundred times, you might just find a different place.",
     file: "./assets/songs/mysterious_place.mp3"
 };
 let currentSeasonTrackInfo = null;
