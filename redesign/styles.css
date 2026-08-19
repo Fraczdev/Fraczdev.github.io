@@ -143,7 +143,7 @@ body {
     justify-content: center;
     pointer-events: auto;
     cursor: pointer;
-    opacity: 100;
+    opacity: 1;
     transition: opacity 0.35s ease;
     z-index: 6;
 }
