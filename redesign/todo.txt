@@ -7,8 +7,8 @@
 process:
 
 
-1) remove the css style of the three sprite, since the hitbox is actually rendered before css
-2) add the scaling factor of the sprite in the setTreePosition() by a fixed number (2.3x)
+1) remove the css style of the three sprite, since the hitbox is actually rendered before css (X)
+2) add the scaling factor of the sprite in the setTreePosition() by a fixed number (2.3x) (X)
 3) 
 
 
