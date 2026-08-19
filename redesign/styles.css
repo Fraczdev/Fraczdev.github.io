@@ -285,6 +285,9 @@ body {
     -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
+        mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0.95;
@@ -783,8 +786,8 @@ body {
     animation: marquee-glint 4.8s ease-in-out infinite;
 }
 
-.content-panel--contact {
-}
+/*.content-panel--contact {
+}*/
 
 .content-panel--contact.is-active {
     display: flex;
