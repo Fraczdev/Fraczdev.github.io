@@ -126,7 +126,7 @@ body {
     margin: 0 auto;
     box-shadow: 0 0 70px rgba(0, 0, 0, 0.92);
     z-index: 3;
-    isolation: isolate; /* Allow blend modes inside to interact with border artwork */
+    isolation: isolate;
     transform: scale(var(--stage-scale));
     transform-origin: center center;
     will-change: transform;
