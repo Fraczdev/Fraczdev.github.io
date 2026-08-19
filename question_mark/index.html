@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>???</title>
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <main id="scene" class="scene" aria-label="Kris path scene">
+        <div class="scene__background" aria-hidden="true"></div>
+        <img id="treeSprite" class="tree-sprite" alt="" aria-hidden="true" draggable="false" />
+        <img id="treeLeavesSprite!" class="tree-leaves-sprite" alt="" aria-hidden="true" draggable="false" />
+        <div id="leafLayer" class="leaf-layer" aria-hidden="true"></div>
+        <img id="krisSpriteBottom" class="kris-sprite kris-sprite--bottom" alt="Kris" draggable="false">
+        <img id="krisSpriteTop" class="kris-sprite kris-sprite--top" alt="" aria-hidden="true" draggable="false">
+
+        <section id="hitboxEditor" class="hitbox-editor is-hidden" aria-label="Hitbox placer">
+            <div class="hitbox-editor__toolbar">
+                <button id="hitboxModeToggle" type="button">Exit editor</button>
+                <button id="hitboxClear" type="button">Clear</button>
+                <button id="hitboxCopy" type="button">Copy JSON</button>
+            </div>
+            <textarea id="hitboxOutput" class="hitbox-editor__output" readonly spellcheck="false"></textarea>
+            <div id="hitboxLayer" class="hitbox-editor__layer" aria-hidden="true"></div>
+        </section>
+
+        <section id="dialogue" class="dialogue is-hidden" aria-live="polite" aria-atomic="true">
+            <div class="dialogue__shell">
+                <div class="dialogue__content">
+                <div id="dialogueText" class="dialogue__text"></div>
+                <div id="choiceRow" class="dialogue__choices" role="group" aria-label="Dialogue choice">
+        <span class="dialogue__option">
+                <img id="heartYes" class="dialogue__heart" alt="" aria-hidden="true">
+                    <button id="choiceYes" class="dialogue__choice is-selected" type="button">Yes</button>
+    </span>
+            <span class="dialogue__spacer" aria-hidden="true"></span>
+                    <span class="dialogue__option">
+                        <img id="heartNo" class="dialogue__heart" alt="" aria-hidden="true">
+                            <button id="choiceNo" class="dialogue__choice" type="button">No</button>
+            </span>
+    </div>
+                </div>
+            </div>
+        </section>
+
+        <audio id="bgm" preload="auto" loop></audio>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+</body>
+</html>

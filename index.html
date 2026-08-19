@@ -88,7 +88,7 @@
         .title-with-hearts { display: inline-flex; align-items: center; gap: 0.4rem; }
         .heart-inline { width: 14px; height: 14px; }
 
-        /* Keep closing tag tight to the right heart */
+        
         #about .section-header .title-with-hearts { display: inline-flex; white-space: nowrap; }
         #about .section-header .title-with-hearts .tag-close { margin-left: 0.25rem; margin-right: 0; }
 
@@ -139,7 +139,7 @@
         
         
         @media (min-width: 1024px) {
-            /* Make About wider and gently enlarge Skills */
+            
             .about-skills-grid { grid-template-columns: 1.5fr 1.2fr; align-items: stretch; }
             .about-skills-grid .section { align-self: stretch; }
             
@@ -147,7 +147,7 @@
             .about-skills-grid .section .section-inner,
             .about-skills-grid .section .ascii-card { height: 100%; }
             
-            /* Prevent cards from hugging the viewport edges on medium/large screens */
+            
             .about-skills-grid #about { margin-left: 0; margin-right: 0; }
             .about-skills-grid #skills { margin-left: 0; }
         }
@@ -295,10 +295,10 @@ try {
 }
 
 if (!gifUrl) {
-    gifUrl = "https://fuchsia-grata-24.tiiny.site/somk.gif"; // Fallback to default gif
+    gifUrl = "https://fuchsia-grata-24.tiiny.site/somk.gif"; // Fallback 
 }
 
-// Set the profile picture
+
 const profileImg = document.querySelector('.profile-video-wrapper img');
 if (profileImg) {
     profileImg.src = gifUrl;

@@ -1,0 +1,36 @@
+1) check hitbox collider
+2) adjust png size (rTree.png)
+3) test and debug
+
+
+
+process:
+
+
+1) remove the css style of the three sprite, since the hitbox is actually rendered before css
+2) add the scaling factor of the sprite in the setTreePosition() by a fixed number (2.3x)
+3) 
+
+
+gone
+
+
+
+todo 2:
+
+
+1) split kris hitbox in top (head and torso) and bottom (legs & under) for hitbox purposes 1/2 (X)
+2) add map hitboxes (X)
+3) check z indexes (top hitbox has to be higher than tree, bottom has to be lower than tree) 2/2 (X)
+4) hitboxes check (X)
+5) fix the sprite walking error when you spam an arrow (X)
+6) remove walking animation (make it stuck on frame 1) when colliding with wall (X)
+
+
+
+
+
+
+
+
+# ALL DONE!!!!!!!

@@ -39,7 +39,7 @@
             window.__visitedRedesign = true;
         }
 
-        // Check if this is the first visit to trigger unlock celebration
+       
         const hasVisited = readVisitFlag();
         window.__visitedRedesign = hasVisited;
         
@@ -48,8 +48,8 @@
             const seasonalAudio = document.getElementById('seasonalAudio');
             
             if (!hasVisited) {
-                // First visit - show question mark
-                // Pause audio to prevent overlap
+                
+                // prevent overlap
                 if (seasonalAudio) {
                     seasonalAudio.pause();
                 }
@@ -57,24 +57,24 @@
                 const questionMark = document.getElementById('questionMark');
                 
                 questionMark.addEventListener('click', () => {
-                    // Mark as visited
+                    
                     writeVisitFlag();
                     
-                    // Hide question overlay
+                    
                     questionOverlay.style.display = 'none';
                     
-                    // Play golden key sound
+                    
                     const audio = new Audio('../golden_key.wav');
                     audio.volume = 0.4;
                     audio.play().catch(err => console.log('Audio play failed:', err));
                     
-                    // Show unlock popup animation
+                    
                     const popup = document.createElement('div');
                     popup.className = 'unlock-popup';
-                    popup.innerHTML = '<img src="../unlock.png" alt="Unlocked!">';
+                    popup.innerHTML = '<img src="../unlock.png" alt="Unlocked">';
                     document.body.appendChild(popup);
                     
-                    // Resume seasonal audio after unlock animation completes
+                    
                     setTimeout(() => {
                         popup.remove();
                         if (seasonalAudio) {
@@ -83,7 +83,7 @@
                     }, 2500);
                 });
             } else {
-                // Already visited - hide overlay immediately
+                
                 questionOverlay.style.display = 'none';
             }
         });

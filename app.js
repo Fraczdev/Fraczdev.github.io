@@ -62,7 +62,6 @@ const panelLabels = {
     contact: "CONTACT"
 };
 
-// Navigate to old portfolio when clicking the season heart
 seasonHeart?.addEventListener("click", () => {
     window.location.href = "./originalportfolio/";
 });

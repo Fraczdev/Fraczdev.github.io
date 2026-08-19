@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-	// Navigate to redesigned portfolio when clicking profile picture
 	const profileContainer = document.querySelector('.profile-video-container');
 	profileContainer?.addEventListener('click', () => {
-		window.location.href = './redesign/';
+		window.location.href = './question_mark/';
 	});
 
 	const playerRoot = document.getElementById('mediaPlayer');

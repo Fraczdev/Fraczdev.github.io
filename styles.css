@@ -123,7 +123,7 @@ body {
     margin: 0 auto;
     box-shadow: 0 0 70px rgba(0, 0, 0, 0.92);
     z-index: 3;
-    isolation: isolate; /* Allow blend modes inside to interact with border artwork */
+    isolation: isolate; 
 }
 
 .season-heart {
@@ -208,7 +208,7 @@ body {
     position: relative;
     overflow: hidden;
     background: transparent;
-    padding: 1.35rem; /* Stage interior padding */
+    padding: 1.35rem; 
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
@@ -250,13 +250,13 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: 0.75fr 1.85fr 0.6fr;
-    gap: 1.25rem; /* Column spacing tweak point */
+    gap: 1.25rem; 
 }
 
 .stage-column {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem; /* Adjust per-column spacing here */
+    gap: 0.85rem;
 }
 
 .stage-column.center {
@@ -265,20 +265,20 @@ body {
 }
 
 .stage-column.right {
-    justify-content: flex-end; /* Keep the buttons/hints anchored near the bottom */
+    justify-content: flex-end; 
     align-items: stretch;
-    gap: 1.1rem; /* Right column spacing */
+    gap: 1.1rem; 
     min-height: auto;
     position: relative;
     margin-top: 1.85rem;
-    padding: 0 0 1.65rem; /* More bottom padding so stack rides higher */
+    padding: 0 0 1.65rem;
 }
 
 .nav-stack {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Space between buttons and hints */
+    gap: 1rem;
     justify-content: flex-end;
     align-items: stretch;
     flex: 1;
@@ -715,7 +715,6 @@ body {
     }
 }
 
-/* (project placeholder cards removed) */
 
 .contact-methods {
     list-style: none;
@@ -835,7 +834,7 @@ body {
     width: 100%;
     text-align: center;
     letter-spacing: 0.08em;
-        /* Removed animation from general orbit-text */
+       
 }
 
 
@@ -851,7 +850,7 @@ body {
     margin-top: auto;
     margin-bottom: 0.9rem;
     font-size: 1em;
-        animation: orbit-small 6s linear infinite; /* Added animation specifically for sidebar */
+        animation: orbit-small 6s linear infinite;
 }
 
 
@@ -917,7 +916,7 @@ body {
     justify-content: flex-start;
     gap: 0.6rem;
     letter-spacing: 0.08em;
-    min-height: 380px; /* Adjust nav hints height range */
+    min-height: 380px; 
     max-height: 480px;
     overflow: hidden;
     width: 100%;
