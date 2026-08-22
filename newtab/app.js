@@ -683,31 +683,31 @@ updateJournal();
 var BORDERS = [
   {
     name: "Simple",
-    file: "redesign/assets/borders-backgrounds/simple.png"
+    file: "../redesign/assets/borders-backgrounds/simple.png"
   },
   {
     name: "Ruins",
-    file: "redesign/assets/borders-backgrounds/ruins.png"
+    file: "../redesign/assets/borders-backgrounds/ruins.png"
   },
   {
     name: "Snowdin",
-    file: "redesign/assets/borders-backgrounds/snowdin.png"
+    file: "../redesign/assets/borders-backgrounds/snowdin.png"
   },
   {
     name: "Waterfall",
-    file: "redesign/assets/borders-backgrounds/waterfall.png"
+    file: "../redesign/assets/borders-backgrounds/waterfall.png"
   },
   {
     name: "Hotland",
-    file: "redesign/assets/borders-backgrounds/hotland.png"
+    file: "../redesign/assets/borders-backgrounds/hotland.png"
   },
   {
     name: "CORE Castle",
-    file: "redesign/assets/borders-backgrounds/castle.png"
+    file: "../redesign/assets/borders-backgrounds/castle.png"
   },
   {
     name: "Dog Shrine",
-    file: "redesign/assets/borders-backgrounds/dog.png"
+    file: "../redesign/assets/borders-backgrounds/dog.png"
   }
 ];
 
@@ -800,45 +800,45 @@ function detectSeason(date) {
 
 var SEASON_SOURCES = {
   winter: [
-    "redesign/assets/season-particles/winter/snowflake1.png",
-    "redesign/assets/season-particles/winter/snowflake2.png"
+    "../redesign/assets/season-particles/winter/snowflake1.png",
+    "../redesign/assets/season-particles/winter/snowflake2.png"
   ],
 
   spring: [
-    "redesign/assets/season-particles/spring/spring_leaf.png"
+    "../redesign/assets/season-particles/spring/spring_leaf.png"
   ],
 
   fall: [
-    "redesign/assets/season-particles/fall/leafred.png",
-    "redesign/assets/season-particles/fall/leaforange.png",
-    "redesign/assets/season-particles/fall/leafyellow.png"
+    "../redesign/assets/season-particles/fall/leafred.png",
+    "../redesign/assets/season-particles/fall/leaforange.png",
+    "../redesign/assets/season-particles/fall/leafyellow.png"
   ]
 };
 
 var SEASON_AUDIO = {
   winter: {
-    file: "./redesign/assets/songs/Uwa!!So Holiday.mp3",
+    file: "../redesign/assets/songs/Uwa!!So Holiday.mp3",
     title: "Winter OST",
     artist: "Seasonal soundtrack",
     label: "WINTER"
   },
 
   spring: {
-    file: "./redesign/assets/songs/Uwa!!So Temperate.mp3",
+    file: "../redesign/assets/songs/Uwa!!So Temperate.mp3",
     title: "Spring OST",
     artist: "Seasonal soundtrack",
     label: "SPRING"
   },
 
   summer: {
-    file: "./redesign/assets/songs/Uwa!!So HEATS!!.mp3",
+    file: "../redesign/assets/songs/Uwa!!So HEATS!!.mp3",
     title: "Summer OST",
     artist: "Seasonal soundtrack",
     label: "SUMMER"
   },
 
   fall: {
-    file: "./redesign/assets/songs/Uwa!!So Temperate.mp3",
+    file: "../redesign/assets/songs/Uwa!!So Temperate.mp3",
     title: "Fall OST",
     artist: "Seasonal soundtrack",
     label: "FALL"
