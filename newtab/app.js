@@ -817,28 +817,28 @@ var SEASON_SOURCES = {
 
 var SEASON_AUDIO = {
   winter: {
-    file: "redesign/assets/songs/Uwa!!So Holiday.mp3",
+    file: "./redesign/assets/songs/Uwa!!So Holiday.mp3",
     title: "Winter OST",
     artist: "Seasonal soundtrack",
     label: "WINTER"
   },
 
   spring: {
-    file: "redesign/assets/songs/Uwa!!So Temperate.mp3",
+    file: "./redesign/assets/songs/Uwa!!So Temperate.mp3",
     title: "Spring OST",
     artist: "Seasonal soundtrack",
     label: "SPRING"
   },
 
   summer: {
-    file: "redesign/assets/songs/Uwa!!So HEATS!!.mp3",
+    file: "./redesign/assets/songs/Uwa!!So HEATS!!.mp3",
     title: "Summer OST",
     artist: "Seasonal soundtrack",
     label: "SUMMER"
   },
 
   fall: {
-    file: "redesign/assets/songs/Uwa!!So Temperate.mp3",
+    file: "./redesign/assets/songs/Uwa!!So Temperate.mp3",
     title: "Fall OST",
     artist: "Seasonal soundtrack",
     label: "FALL"
