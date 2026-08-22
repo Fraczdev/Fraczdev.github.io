@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pulse — new tab</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='0' y='13' font-size='14'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="backdrop" id="backdrop"></div>
+<canvas id="particles"></canvas>
+
+<div class="stage" id="stage">
+  <div class="stage-frame">
+
+    <div class="top-row">
+      <div class="heart-wrap" id="heartWrap" title="">
+        <div class="heart-spinner">
+        <img
+          class="heart"
+          id="heart"
+          src="redesign/assets/inspiration-tagline/red-heart.png"
+          alt="a beating red heart"
+        >
+        </div>
+      </div>
+
+      <div class="summer-sun" id="summerSun">
+        <img src="redesign/assets/season-particles/sun.png" alt="">
+      </div>
+    </div>
+
+    <form class="search-row" id="searchForm">
+      <div class="engine-tabs" id="engineTabs"></div>
+
+      <div class="search-input-row">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="search the underground..."
+          autocomplete="off"
+          autofocus
+        >
+
+        <button type="submit" class="go-btn">GO</button>
+      </div>
+    </form>
+
+    <div class="shortcuts" id="shortcuts"></div>
+
+    <div class="workspace">
+
+      <section class="panel todo-panel">
+        <div class="panel-header">
+          <h2>TO-DO</h2>
+          <span id="todoCount">0</span>
+        </div>
+
+        <div class="todo-input-row">
+          <input
+            id="todoInput"
+            type="text"
+            placeholder="add a task..."
+            maxlength="100"
+          >
+          <button id="todoAdd" type="button">+</button>
+        </div>
+
+        <div class="todo-list" id="todoList"></div>
+      </section>
+
+      <section class="panel calendar-panel">
+        <div class="panel-header">
+          <button class="calendar-nav" id="calendarPrev" type="button">‹</button>
+
+          <h2 id="calendarTitle">MONTH YEAR</h2>
+
+          <button class="calendar-nav" id="calendarNext" type="button">›</button>
+        </div>
+
+        <div class="calendar-weekdays">
+          <span>MON</span>
+          <span>TUE</span>
+          <span>WED</span>
+          <span>THU</span>
+          <span>FRI</span>
+          <span>SAT</span>
+          <span>SUN</span>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+
+      <section class="panel journal-panel">
+        <div class="panel-header">
+          <h2>JOURNAL</h2>
+          <span id="journalStatus">SAVED</span>
+        </div>
+
+        <textarea
+          id="journalInput"
+          placeholder="write something..."
+          maxlength="5000"
+        ></textarea>
+
+        <div class="journal-footer">
+          <span id="journalDate"></span>
+          <span id="journalCharacters">0 / 5000</span>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="bottom-row">
+      <button class="ghost-btn" id="borderToggle" type="button">
+        BORDER: <span id="borderName">Simple</span>
+      </button>
+
+      <div class="hint" id="hint">
+        enjoy!
+      </div>
+
+      <div class="clock">
+        <div class="clock-time" id="clockTime">--:--:--</div>
+        <div class="clock-date" id="clockDate">&nbsp;</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="audio-player" id="audioPlayer">
+  <div class="card now-playing-card is-idle" id="nowPlayingCard" aria-live="polite">
+    <p class="now-playing-label">NOW PLAYING</p>
+    <p class="now-playing-track" id="nowPlayingTitle">Seasonal OST warming up…</p>
+    <p class="now-playing-artist" id="nowPlayingArtist">Interact to unlock the track.</p>
+    <p class="now-playing-season" id="nowPlayingSeason">Awaiting season fetch</p>
+
+    <div class="now-playing-bars" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <button
+    class="audio-toggle"
+    id="audioToggle"
+    type="button"
+    aria-pressed="false"
+    disabled
+  >
+    Play music
+  </button>
+</div>
+
+<audio id="seasonalAudio" preload="metadata"></audio>
+
+<div class="modal-overlay" id="shortcutModal">
+  <div class="modal">
+
+    <h3>New shortcut</h3>
+
+    <label>
+      Name
+      <input id="scName" placeholder="e.g. Mail" maxlength="20">
+    </label>
+
+    <label>
+      URL
+      <input id="scUrl" placeholder="https://" maxlength="300">
+    </label>
+
+    <div class="modal-actions">
+      <button type="button" id="scCancel">Cancel</button>
+      <button type="button" id="scSave">Save</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="app.js" defer></script>
+
+</body>
+</html>
