@@ -1060,7 +1060,7 @@ function wireHitboxEditor() {
     window.addEventListener("pointerup", () => {
         if (hitboxDraft) finalizeDraft();
     });
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener("keydown", (event) => { 
         if (event.code === "KeyH") {
             toggleEditor();
         }
